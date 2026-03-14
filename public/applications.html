@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Applications - Shrestha</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="logo">Shrestha</div>
+
+  <div class="nav">
+    <a href="index.html"><div class="icon">🏠</div><span>Dashboard</span></a>
+    <a href="jobs.html"><div class="icon">💼</div><span>Find Jobs</span></a>
+    <a href="applications.html" class="active"><div class="icon">📊</div><span>Applications</span></a>
+    <a href="profile.html"><div class="icon">👤</div><span>Profile</span></a>
+    <a href="settings.html"><div class="icon">⚙️</div><span>Settings</span></a>
+
+    <!-- LOGOUT BUTTON -->
+    <a href="#" onclick="logout()"><div class="icon">🚪</div><span>Logout</span></a>
+
+  </div>
+
+  <div class="toggle">☰</div>
+</div>
+
+
+<div class="main">
+
+<div class="header">
+<h2>Your Applications 📊</h2>
+</div>
+
+
+<div class="card">
+<h3>Application History</h3>
+
+<!-- APPLICATIONS WILL LOAD HERE -->
+<div id="applicationList"></div>
+
+</div>
+
+</div>
+
+
+
+<script>
+
+const applicationList = document.getElementById("applicationList");
+
+
+// Load applications from backend
+fetch("/api/applications")
+.then(res => res.json())
+.then(data => {
+
+applicationList.innerHTML = "";
+
+if(data.length === 0){
+
+applicationList.innerHTML = "<p>No applications yet.</p>";
+return;
+
+}
+
+data.forEach(app => {
+
+applicationList.innerHTML += `
+
+<div class="card" style="margin-top:20px;">
+
+<h4>${app.company} - ${app.title}</h4>
+
+<p style="color:#06b6d4;">Status: Applied</p>
+
+<p style="font-size:12px;opacity:0.6;">
+Applied on: ${new Date(app.appliedAt).toLocaleDateString()}
+</p>
+
+</div>
+
+`;
+
+});
+
+})
+
+.catch(err => console.log(err));
+
+
+
+
+// LOGOUT FUNCTION
+function logout(){
+
+localStorage.removeItem("token");
+
+alert("Logged out successfully");
+
+window.location.href="login.html";
+
+}
+
+</script>
+
+</body>
+</html>

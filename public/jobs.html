@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Jobs - Shrestha</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+  <div class="logo">Shrestha</div>
+
+  <div class="nav">
+    <a href="index.html"><div class="icon">🏠</div><span>Dashboard</span></a>
+    <a href="jobs.html" class="active"><div class="icon">💼</div><span>Find Jobs</span></a>
+    <a href="applications.html"><div class="icon">📊</div><span>Applications</span></a>
+    <a href="profile.html"><div class="icon">👤</div><span>Profile</span></a>
+    <a href="settings.html"><div class="icon">⚙️</div><span>Settings</span></a>
+
+    <!-- LOGOUT BUTTON -->
+    <a href="#" onclick="logout()"><div class="icon">🚪</div><span>Logout</span></a>
+
+  </div>
+
+</div>
+
+
+<div class="main">
+
+<div class="header">
+<h2>Find Jobs 💼</h2>
+
+<div class="search">
+<input id="jobSearch" placeholder="Search jobs...">
+</div>
+
+</div>
+
+
+<div class="card">
+
+<h3>Available Roles</h3>
+
+<div id="jobList"></div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const jobList = document.getElementById("jobList");
+
+
+// Load Jobs
+fetch("/api/jobs")
+
+.then(res => res.json())
+
+.then(data => {
+
+jobList.innerHTML = "";
+
+data.forEach(job => {
+
+jobList.innerHTML += `
+
+<div class="card" style="margin-top:20px;">
+
+<h4>${job.title}</h4>
+
+<p style="opacity:0.7;">${job.company}</p>
+
+<button class="btn" onclick="applyJob('${job.title}','${job.company}')">
+
+Apply
+
+</button>
+
+</div>
+
+`;
+
+});
+
+});
+
+
+
+
+// APPLY JOB FUNCTION
+function applyJob(title, company){
+
+const token = localStorage.getItem("token");
+
+if(!token){
+
+alert("Please login first");
+
+window.location.href="login.html";
+
+return;
+
+}
+
+
+fetch("/api/applications",{
+
+method:"POST",
+
+headers:{
+
+"Content-Type":"application/json",
+
+"Authorization":"Bearer "+token
+
+},
+
+body:JSON.stringify({
+
+title:title,
+
+company:company
+
+})
+
+})
+
+.then(res=>res.json())
+
+.then(data=>{
+
+alert("Application Submitted!");
+
+})
+
+.catch(err=>console.log(err));
+
+}
+
+
+
+// SEARCH JOB
+const search = document.getElementById("jobSearch");
+
+search.addEventListener("keyup",function(){
+
+let filter = search.value.toLowerCase();
+
+let jobs = document.querySelectorAll("#jobList .card");
+
+jobs.forEach(job=>{
+
+let text = job.innerText.toLowerCase();
+
+job.style.display = text.includes(filter) ? "block" : "none";
+
+});
+
+});
+
+
+
+// LOGOUT FUNCTION
+function logout(){
+
+localStorage.removeItem("token");
+
+alert("Logged out successfully");
+
+window.location.href="login.html";
+
+}
+
+</script>
+
+</body>
+</html>

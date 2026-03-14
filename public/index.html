@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard - NaukriVerse</title>
+<link rel="stylesheet" href="assets/style.css">
+</head>
+
+<body>
+
+<div class="sidebar">
+  <div class="logo">NaukriVerse</div>
+
+  <div class="nav">
+    <a href="index.html" class="active">
+      <div class="icon">🏠</div><span>Dashboard</span>
+    </a>
+
+    <a href="jobs.html">
+      <div class="icon">💼</div><span>Find Jobs</span>
+    </a>
+
+    <a href="applications.html">
+      <div class="icon">📊</div><span>Applications</span>
+    </a>
+
+    <a href="profile.html">
+      <div class="icon">👤</div><span>Profile</span>
+    </a>
+
+    <a href="settings.html">
+      <div class="icon">⚙️</div><span>Settings</span>
+    </a>
+
+    <!-- LOGOUT BUTTON -->
+    <a href="#" onclick="logout()">
+      <div class="icon">🚪</div><span>Logout</span>
+    </a>
+
+  </div>
+
+  <div class="toggle">☰</div>
+</div>
+
+
+
+<div class="main">
+
+<!-- HEADER -->
+<div class="header">
+<div>
+<h2>Welcome back 👋</h2>
+<p style="opacity:0.6;">Here’s what’s happening with your job search today.</p>
+</div>
+
+<div class="search">
+<input placeholder="Search opportunities...">
+</div>
+
+</div>
+
+
+
+<!-- MINI STATS -->
+<div class="mini-grid">
+
+<div class="mini-card">
+Applications
+<h4 id="totalApps">0</h4>
+</div>
+
+<div class="mini-card">
+Interviews
+<h4>3</h4>
+</div>
+
+<div class="mini-card">
+Pending
+<h4>12</h4>
+</div>
+
+<div class="mini-card">
+Offers
+<h4>1</h4>
+</div>
+
+</div>
+
+
+
+<!-- MAIN GRID -->
+<div class="grid">
+
+<!-- LEFT -->
+<div>
+
+<div class="card">
+
+<div class="section-title">✨ Recommended Opportunity</div>
+
+<h3>UX/UI Design Intern</h3>
+
+<p style="opacity:0.6;">Google • Remote • $25/hr</p>
+
+<div style="display:flex; gap:15px; margin-top:15px;">
+<div><strong>Deadline:</strong> Nov 25</div>
+<div><strong>Applicants:</strong> 124</div>
+<div><strong>Type:</strong> Internship</div>
+</div>
+
+<button class="btn" onclick="applyJob('UX/UI Design Intern','Google')">
+Apply Now
+</button>
+
+</div>
+
+
+
+<div class="card" style="margin-top:25px;">
+
+<div class="section-title">🚀 Recent Opportunities</div>
+
+<div class="recent-item">
+<div>
+<strong>Software Engineer Intern</strong><br>
+<span style="opacity:0.6;">Microsoft • Onsite</span>
+</div>
+<div class="tag">New</div>
+</div>
+
+<div class="recent-item">
+<div>
+<strong>Business Analyst</strong><br>
+<span style="opacity:0.6;">Amazon • Hybrid</span>
+</div>
+<div class="tag">Paid</div>
+</div>
+
+<div class="recent-item">
+<div>
+<strong>Product Design Intern</strong><br>
+<span style="opacity:0.6;">Spotify • Remote</span>
+</div>
+<div class="tag">Remote</div>
+</div>
+
+</div>
+
+</div>
+
+
+
+<!-- RIGHT -->
+<div>
+
+<div class="card">
+
+<div class="section-title">📊 Application Status</div>
+
+Interviewing (3)
+<div class="progress-bar">
+<div style="width:40%"></div>
+</div>
+
+<br>
+
+Pending Review (12)
+<div class="progress-bar">
+<div style="width:75%"></div>
+</div>
+
+<br>
+
+Rejected (8)
+<div class="progress-bar">
+<div style="width:50%"></div>
+</div>
+
+</div>
+
+
+
+<div class="card" style="margin-top:25px;">
+
+<div class="section-title">📅 Upcoming Events</div>
+
+<div class="events">
+
+<div class="event">
+<strong>Career Fair 2025</strong><br>
+<span style="opacity:0.6;">Nov 14 • Main Hall</span>
+</div>
+
+<div class="event">
+<strong>Resume Workshop</strong><br>
+<span style="opacity:0.6;">Nov 16 • Zoom</span>
+</div>
+
+<div class="event">
+<strong>Mock Interview</strong><br>
+<span style="opacity:0.6;">Nov 18 • Career Center</span>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+
+<script src="assets/app.js"></script>
+
+<script>
+
+function applyJob(title, company){
+
+const token = localStorage.getItem("token");
+
+if(!token){
+alert("Please login first");
+window.location.href="login.html";
+return;
+}
+
+fetch("/api/applications",{
+
+method:"POST",
+
+headers:{
+"Content-Type":"application/json",
+"Authorization":"Bearer "+token
+},
+
+body:JSON.stringify({
+title:title,
+company:company
+})
+
+})
+
+.then(res=>res.json())
+.then(data=>{
+alert("Application Submitted!");
+})
+.catch(err=>console.log(err));
+
+}
+
+
+
+// LOAD TOTAL APPLICATIONS
+fetch("/api/applications")
+.then(res=>res.json())
+.then(data=>{
+document.getElementById("totalApps").innerText = data.length;
+});
+
+
+
+// LOGOUT FUNCTION
+function logout(){
+
+localStorage.removeItem("token");
+
+alert("Logged out successfully");
+
+window.location.href="login.html";
+
+}
+
+</script>
+
+</body>
+</html>
